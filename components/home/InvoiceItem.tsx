@@ -1,11 +1,11 @@
 import React from "react";
- import { format } from "date-fns";
- import { useRouter } from "next/router";
- import { Invoice, ScreenType } from "../../types";
- import { DraftIndicator } from "../shared/DraftingIndicator";
- import { PaidIndicator } from "../shared/PaidIndicator";
- import { PendingIndicator } from "../shared/PendingIndicator";
- import styles from "./InvoiceItem.module.scss";
+import { format } from "date-fns";
+import { useRouter } from "next/router";
+import { Invoice,ScreenType } from "@/types";
+import { DraftIndicator } from "../shared/DraftingIndicator";
+import { PaidIndicator } from "../shared/PaidIndicator";
+import { PendingIndicator } from "../shared/PendingIndicator";
+import styles from "./InvoiceItem.module.scss";
 
  interface InvoiceItemProps {
    invoice: Invoice;

@@ -1,26 +1,27 @@
 import React from "react";
 import { useToggle } from "../hooks/useToggle";
 
- interface ThemeState {
-   dark: boolean;
-   toggleTheme: () => void;
- }
+interface ThemeState {
+  dark: boolean;
+  toggleTheme: () => void;
+}
 
- const ThemeContext = React.createContext<ThemeState>(null);
+const ThemeContext = React.createContext<ThemeState>(null);
 
- const ThemeProvider: React.FC = ({ children }) => {
-   const [dark, darkHandlers] = useToggle(false);
+const ThemeProvider: React.FC = ({ children }) => {
+  // TODO implement preferred theme
+  const [dark, darkHandlers] = useToggle(false);
 
-   const toggleTheme = () => {
-     darkHandlers.toggle();
-   };
-   return (
-     <ThemeContext.Provider value={{ dark, toggleTheme }}>
-       {children}
-     </ThemeContext.Provider>
-   );
- };
+  const toggleTheme = () => {
+    darkHandlers.toggle();
+  };
+  return (
+    <ThemeContext.Provider value={{ dark, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
 
- const useThemeContext = () => React.useContext(ThemeContext);
+const useThemeContext = () => React.useContext(ThemeContext);
 
- export { useThemeContext, ThemeProvider };
+export { useThemeContext, ThemeProvider };

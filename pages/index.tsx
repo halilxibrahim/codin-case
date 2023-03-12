@@ -1,39 +1,70 @@
 import Head from "next/head";
-import data from "../public/data.json";
 import { useThemeContext } from "../lib/context/ThemeContext";
 import React from "react";
-import { ActionBar } from "../components/invoice/ActionBar";
+import { ActionBar } from "../components/home/ActionBar";
+import { InvoiceList } from "../components/home/InvoiceList";
+import { Invoice, ItemStatus, ScreenType } from "../types";
+import { useToggle } from "../lib/hooks/useToggle";
+import { useScreenContext } from "../lib/context/ScreenContext";
+import { InvoiceForm } from "../components/shared/InvoiceForm";
 
- export type ScreenType = "phone" | "tablet" | "desktop";
+export default function Home() {
+  const [draftFilter, draftFilterHandler] = useToggle();
+  const [pendingFilter, pendingFilterHandler] = useToggle();
+  const [paidFilter, paidFilterHandler] = useToggle();
+  const [isModalOpen, modalHandler] = useToggle();
+  const [activeFilters, setActiveFilters] = React.useState<ItemStatus[]>([]);
+  const { screenType } = useScreenContext();
 
- export default function Home() {
-   const { dark } = useThemeContext();
-   const [screenType, setScreenType] = React.useState<ScreenType>("phone");
-   const darkClass = dark ? "dark" : "";
+  const updateFiltersEffect = () => {
+    let filters: ItemStatus[] = [];
 
-   const handleScreenResize = () => {
-     if (!window) return;
-     if (window.innerWidth < 768) {
-       setScreenType("phone");
-     } else if (window.innerWidth < 1440) {
-       setScreenType("tablet");
-     } else {
-       setScreenType("desktop");
-     }
-   };
+    if (draftFilter) filters.push("draft");
+    if (paidFilter) filters.push("paid");
+    if (pendingFilter) filters.push("pending");
 
-   React.useEffect(() => {
-     handleScreenResize();
-     window.addEventListener("resize", handleScreenResize);
+    setActiveFilters(filters);
+  };
 
-     return () => {
-       window.removeEventListener("resize", handleScreenResize);
-     };
-   }, []);
+  React.useEffect(updateFiltersEffect, [
+    paidFilter,
+    pendingFilter,
+    draftFilter,
+  ]);
 
-   return (
-     <main role="main" className={darkClass}>
-       <ActionBar screenType={screenType} />
-     </main>
-   );
- }
+  const filterHandlers = {
+    draft: {
+      value: draftFilter,
+      onChange: () => {
+        draftFilterHandler.toggle();
+      },
+    },
+    pending: {
+      value: pendingFilter,
+      onChange: () => {
+        pendingFilterHandler.toggle();
+      },
+    },
+    paid: {
+      value: paidFilter,
+      onChange: () => {
+        paidFilterHandler.toggle();
+      },
+    },
+  };
+  return (
+    <main role="main">
+      <InvoiceForm
+        show={isModalOpen}
+        cancel={modalHandler.off}
+        editing={false}
+      />
+      <ActionBar
+        screenType={screenType}
+        filterHandlers={filterHandlers}
+        handleNewInvoice={modalHandler.on}
+      />
+      <InvoiceList filters={activeFilters} screenType={screenType} />
+    </main>
+  );
+}

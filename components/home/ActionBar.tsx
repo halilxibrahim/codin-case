@@ -1,7 +1,7 @@
 import React from "react";
-import { useInvoices } from "../../lib/context/InvoiceContext";
+import { useInvoices } from "@/lib/context/InvioceContext";
 import { useThemeContext } from "../../lib/context/ThemeContext";
-import { FilterType, Invoice, ScreenType } from "../../types";
+import { FilterType, Invoice, ScreenType } from "@/types";
 import { FilterDropdown } from "../ui/FilterDropdown";
 import { Heading } from "../ui/Heading";
 import { PlusButton } from "../ui/PlusButton";
