@@ -27,6 +27,6 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
  - [React](https://reactjs.org/) - JS library
  - [Next.js](https://nextjs.org/) - React framework
- - [Styled Components](https://styled-components.com/) - For styles(SASS)
+ - [Styled Components](https://styled-components.com/) - For styles(SCSS)
 
  Website - [Halil ibrahim KAMACI](https://www.halildev.com)
