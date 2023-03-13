@@ -1,16 +1,18 @@
 import React from "react";
+import { useThemeContext } from "../../lib/context/ThemeContext";
 import { Controls } from "./Controls";
 import styles from "./styles/BottomControls.module.scss";
- interface BottomControlsProps {
-   onClickEditing: () => void;
-   onClickDelete?: () => void;
-   onClickPaid?: () => void;
- }
+interface BottomControlsProps {
+  onClickEditing: () => void;
+  onClickDelete?: () => void;
+  onClickPaid?: () => void;
+}
 
- export const BottomControls: React.FC<BottomControlsProps> = (props) => {
-   return (
-     <div className={styles.root}>
-       <Controls {...props} />
-     </div>
-   );
- };
+export const BottomControls: React.FC<BottomControlsProps> = (props) => {
+  const { dark } = useThemeContext();
+  return (
+    <div className={[styles.root, dark ? styles.dark : ""].join(" ")}>
+      <Controls {...props} />
+    </div>
+  );
+};

@@ -1,25 +1,30 @@
 import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import styles from "../../styles/InvoicePage.module.scss";
 import { useInvoices } from "@/lib/context/InvioceContext";
 import { Invoice } from "../../types";
 import { StatusBar } from "../../components/invoice/StatusBar";
 import { Summary } from "../../components/invoice/Summary";
-import { Receipt } from "../../components/invoice/Receipt";
 import { useScreenContext } from "../../lib/context/ScreenContext";
 import { BottomControls } from "../../components/invoice/BottomControls";
 import { useToggle } from "../../lib/hooks/useToggle";
 import { InvoiceForm } from "../../components/shared/InvoiceForm";
+import { useThemeContext } from "../../lib/context/ThemeContext";
+import styles from "../../styles/InvoicePage.module.scss";
+import { BackButton } from "../../components/shared/BackButton";
+import { DeleteModal } from "../../components/invoice/DeleteModal";
 
 interface InvoicePageProps {}
 
 const InvoicePage: React.FC<InvoicePageProps> = (props) => {
+  const { deleteInvoice } = useInvoices();
+  const router = useRouter();
   const [invoice, setInvoice] = React.useState<Invoice | null>(null);
   const [isEditing, setEditing] = useToggle(false);
-  const router = useRouter();
+  const [deleting, deletingHandlers] = useToggle(false);
   const { invoices } = useInvoices();
   const { screenType } = useScreenContext();
+  const { dark } = useThemeContext();
   const { id } = router.query;
 
   const setInvoiceEffect = () => {
@@ -32,17 +37,20 @@ const InvoicePage: React.FC<InvoicePageProps> = (props) => {
 
   React.useEffect(setInvoiceEffect, [id]);
 
+  const handleDeletion = (id: string) => {
+    deleteInvoice(id);
+    router.replace("/");
+  };
   return (
-    <main>
+    <main
+      role="main"
+      style={{ overflow: isEditing ? "hidden" : "auto" }}
+      className={[styles.main, dark ? styles.darkMain : ""].join(" ")}
+    >
       <Head>
         <title>Invoice #{id} | Invoice App</title>
       </Head>
-      <div className={styles.backBtnWrapper}>
-        <button className={styles.backBtn} onClick={() => router.back()}>
-          <img src="/assets/icon-arrow-left.svg" alt="Left Arrow" />
-          <span>Go back</span>
-        </button>
-      </div>
+      <BackButton />
       {invoice && (
         <InvoiceForm
           editing={true}
@@ -56,11 +64,22 @@ const InvoicePage: React.FC<InvoicePageProps> = (props) => {
           status={invoice.status}
           screenType={screenType}
           onClickEditing={setEditing.toggle}
+          onClickDelete={deletingHandlers.on}
         />
       )}
       {invoice && <Summary invoice={invoice} />}
       {screenType === "phone" && (
-        <BottomControls onClickEditing={setEditing.toggle} />
+        <BottomControls
+          onClickEditing={setEditing.toggle}
+          onClickDelete={deletingHandlers.on}
+        />
+      )}
+      {deleting && invoice && (
+        <DeleteModal
+          id={invoice.id}
+          onConfirm={() => handleDeletion(invoice.id)}
+          onCancel={deletingHandlers.off}
+        />
       )}
     </main>
   );
